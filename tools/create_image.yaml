@@ -1,0 +1,92 @@
+identity:
+  name: create_image
+  author: magic_hour
+  label:
+    en_US: Create image
+description:
+  human:
+    en_US: Start a Magic Hour AI image generation job.
+  llm: Start one paid Magic Hour image generation job. Return the project ID, then use Get image project with the same ID until it completes. Never repeat this call to recover a polling delay.
+parameters:
+  - name: prompt
+    type: string
+    required: true
+    label:
+      en_US: Prompt
+    human_description:
+      en_US: Describe the image to generate.
+    llm_description: A concrete description of the desired image.
+    form: llm
+  - name: aspect_ratio
+    type: select
+    required: false
+    default: "1:1"
+    label:
+      en_US: Aspect ratio
+    human_description:
+      en_US: Output image aspect ratio.
+    form: form
+    options:
+      - value: "1:1"
+        label:
+          en_US: Square (1:1)
+      - value: "16:9"
+        label:
+          en_US: Landscape (16:9)
+      - value: "9:16"
+        label:
+          en_US: Portrait (9:16)
+  - name: image_count
+    type: number
+    required: false
+    default: 1
+    min: 1
+    max: 16
+    label:
+      en_US: Image count
+    human_description:
+      en_US: Number of images. Model-specific limits apply.
+    form: form
+  - name: model
+    type: string
+    required: false
+    default: default
+    label:
+      en_US: Model
+    human_description:
+      en_US: Use default unless a current Magic Hour model is specifically required.
+    form: form
+  - name: resolution
+    type: select
+    required: false
+    label:
+      en_US: Resolution
+    human_description:
+      en_US: Optional maximum resolution. Availability depends on model and plan.
+    form: form
+    options:
+      - value: 640px
+        label:
+          en_US: 640px
+      - value: 1k
+        label:
+          en_US: 1K
+      - value: 2k
+        label:
+          en_US: 2K
+      - value: 4k
+        label:
+          en_US: 4K
+output_schema:
+  type: object
+  properties:
+    result:
+      type: object
+      properties:
+        id:
+          type: string
+        credits_charged:
+          type: integer
+extra:
+  python:
+    source: tools/create_image.py

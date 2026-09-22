@@ -1,0 +1,27 @@
+identity:
+  name: get_video_project
+  author: magic_hour
+  label:
+    en_US: Get video project
+description:
+  human:
+    en_US: Retrieve an existing Magic Hour video project and emit completed video links.
+  llm: Retrieve the existing video project. Reuse the same project ID while queued or rendering. Complete projects include temporary signed download URLs; preserve each URL exactly. Error or canceled projects must not be presented as successful.
+parameters:
+  - name: project_id
+    type: string
+    required: true
+    label:
+      en_US: Project ID
+    human_description:
+      en_US: Video project ID returned by Create video or Animate image.
+    llm_description: Exact project ID returned by Create video or Animate image.
+    form: llm
+output_schema:
+  type: object
+  properties:
+    result:
+      type: object
+extra:
+  python:
+    source: tools/get_video_project.py

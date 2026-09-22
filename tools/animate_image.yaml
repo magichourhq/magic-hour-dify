@@ -1,0 +1,94 @@
+identity:
+  name: animate_image
+  author: magic_hour
+  label:
+    en_US: Animate image
+description:
+  human:
+    en_US: Upload an image and start a Magic Hour Image-to-Video job.
+  llm: Upload one image and start one paid Magic Hour Image-to-Video job. Return the project ID, then use Get video project with the same ID until it completes. Never repeat this call to recover a polling delay.
+parameters:
+  - name: image
+    type: file
+    required: true
+    label:
+      en_US: Input image
+    human_description:
+      en_US: Image to animate.
+    llm_description: The source image to animate.
+    form: llm
+  - name: prompt
+    type: string
+    required: false
+    label:
+      en_US: Motion prompt
+    human_description:
+      en_US: Describe subject motion, camera motion, timing, and what must stay fixed.
+    llm_description: Describe motion and camera direction while preserving the source image identity and composition.
+    form: llm
+  - name: duration_seconds
+    type: number
+    required: true
+    default: 5
+    min: 1
+    max: 60
+    label:
+      en_US: Duration
+    human_description:
+      en_US: Video duration in seconds. Model-specific durations apply.
+    form: form
+  - name: model
+    type: string
+    required: false
+    default: default
+    label:
+      en_US: Model
+    human_description:
+      en_US: Use default unless a current Magic Hour model is specifically required.
+    form: form
+  - name: resolution
+    type: select
+    required: false
+    label:
+      en_US: Resolution
+    human_description:
+      en_US: Optional output resolution. Availability depends on model and plan.
+    form: form
+    options:
+      - value: 360p
+        label:
+          en_US: 360p
+      - value: 480p
+        label:
+          en_US: 480p
+      - value: 720p
+        label:
+          en_US: 720p
+      - value: 1080p
+        label:
+          en_US: 1080p
+      - value: 4k
+        label:
+          en_US: 4K
+  - name: audio
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Include audio
+    human_description:
+      en_US: Request generated audio when the selected model supports it. Audio can cost additional credits.
+    form: form
+output_schema:
+  type: object
+  properties:
+    result:
+      type: object
+      properties:
+        id:
+          type: string
+        credits_charged:
+          type: integer
+extra:
+  python:
+    source: tools/animate_image.py
