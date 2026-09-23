@@ -1,0 +1,104 @@
+identity:
+  name: create_video
+  author: magic_hour
+  label:
+    en_US: Create video
+description:
+  human:
+    en_US: Start a Magic Hour Text-to-Video job.
+  llm: Start one paid Magic Hour Text-to-Video job. Return the project ID, then use Get video project with the same ID until it completes. Never repeat this call to recover a polling delay.
+parameters:
+  - name: prompt
+    type: string
+    required: true
+    label:
+      en_US: Prompt
+    human_description:
+      en_US: Describe the video, action, composition, camera, lighting, and style.
+    llm_description: A concrete description of one coherent video scene.
+    form: llm
+  - name: duration_seconds
+    type: number
+    required: true
+    default: 5
+    min: 1
+    max: 60
+    label:
+      en_US: Duration
+    human_description:
+      en_US: Video duration in seconds. Model-specific durations apply.
+    form: form
+  - name: aspect_ratio
+    type: select
+    required: false
+    default: "16:9"
+    label:
+      en_US: Aspect ratio
+    human_description:
+      en_US: Output video aspect ratio.
+    form: form
+    options:
+      - value: "16:9"
+        label:
+          en_US: Landscape (16:9)
+      - value: "9:16"
+        label:
+          en_US: Portrait (9:16)
+      - value: "1:1"
+        label:
+          en_US: Square (1:1)
+  - name: model
+    type: string
+    required: false
+    default: default
+    label:
+      en_US: Model
+    human_description:
+      en_US: Use default unless a current Magic Hour model is specifically required.
+    form: form
+  - name: resolution
+    type: select
+    required: false
+    label:
+      en_US: Resolution
+    human_description:
+      en_US: Optional output resolution. Availability depends on model and plan.
+    form: form
+    options:
+      - value: 360p
+        label:
+          en_US: 360p
+      - value: 480p
+        label:
+          en_US: 480p
+      - value: 720p
+        label:
+          en_US: 720p
+      - value: 1080p
+        label:
+          en_US: 1080p
+      - value: 4k
+        label:
+          en_US: 4K
+  - name: audio
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Include audio
+    human_description:
+      en_US: Request generated audio when the selected model supports it. Audio can cost additional credits.
+    form: form
+output_schema:
+  type: object
+  properties:
+    result:
+      type: object
+      properties:
+        id:
+          type: string
+        credits_charged:
+          type: integer
+extra:
+  python:
+    source: tools/create_video.py

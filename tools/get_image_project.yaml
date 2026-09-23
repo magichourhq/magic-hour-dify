@@ -1,0 +1,27 @@
+identity:
+  name: get_image_project
+  author: magic_hour
+  label:
+    en_US: Get image project
+description:
+  human:
+    en_US: Retrieve an existing Magic Hour image project and emit completed images.
+  llm: Retrieve the existing image project. Reuse the same project ID while queued or rendering. Complete projects include temporary download URLs; error or canceled projects must not be presented as successful.
+parameters:
+  - name: project_id
+    type: string
+    required: true
+    label:
+      en_US: Project ID
+    human_description:
+      en_US: Image project ID returned by Create image.
+    llm_description: Exact project ID returned by Create image.
+    form: llm
+output_schema:
+  type: object
+  properties:
+    result:
+      type: object
+extra:
+  python:
+    source: tools/get_image_project.py

@@ -1,0 +1,33 @@
+identity:
+  author: magic_hour
+  name: magic_hour
+  label:
+    en_US: Magic Hour
+  description:
+    en_US: Generate and retrieve AI images and videos with Magic Hour.
+  icon: icon.svg
+  icon_dark: icon-dark.svg
+  tags:
+    - image
+    - videos
+    - design
+credentials_for_provider:
+  api_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: Magic Hour API key
+    help:
+      en_US: Create an API key in the Magic Hour Developer Hub.
+    url: https://magichour.ai/developer?tab=api-keys
+    placeholder:
+      en_US: Enter your Magic Hour API key
+tools:
+  - tools/create_image.yaml
+  - tools/create_video.yaml
+  - tools/animate_image.yaml
+  - tools/get_image_project.yaml
+  - tools/get_video_project.yaml
+extra:
+  python:
+    source: provider/magic_hour.py
