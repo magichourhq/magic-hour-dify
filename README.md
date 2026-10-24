@@ -15,7 +15,7 @@ Generation is asynchronous. Keep the project ID returned by a create tool and pa
 ## Configure
 
 1. Create a Magic Hour API key at [magichour.ai/developer](https://magichour.ai/developer?tab=api-keys).
-2. Install the packaged `.difypkg` in Dify or run the plugin in Dify's remote debug mode.
+2. For development, run the plugin in Dify's remote debug mode. Marketplace publication and a signed installable release are pending; unsigned `.difypkg` packages do not pass Dify's default signature verification.
 3. Enter the API key in the plugin's **Magic Hour API key** field. Dify stores it as a secret provider credential.
 4. Add a create tool and its matching get tool to an agent or workflow.
 
