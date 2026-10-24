@@ -3,6 +3,7 @@ type: plugin
 author: magichourhq
 name: magic_hour
 repo: https://github.com/magichourhq/magic-hour-dify
+contact: support@magichour.ai
 label:
   en_US: Magic Hour
 description:
