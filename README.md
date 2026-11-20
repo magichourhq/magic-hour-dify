@@ -15,7 +15,7 @@ Generation is asynchronous. Keep the project ID returned by a create tool and pa
 ## Configure
 
 1. Create a Magic Hour API key at [magichour.ai/developer](https://magichour.ai/developer?tab=api-keys).
-2. For development, run the plugin in Dify's remote debug mode. Marketplace publication and a signed installable release are pending; unsigned `.difypkg` packages do not pass Dify's default signature verification.
+2. Install **Magic Hour** from the Dify Marketplace.
 3. Enter the API key in the plugin's **Magic Hour API key** field. Dify stores it as a secret provider credential.
 4. Add a create tool and its matching get tool to an agent or workflow.
 
@@ -24,6 +24,8 @@ Image and video generation consumes Magic Hour credits. The plugin validates cre
 ## Connection requirements
 
 The plugin needs outbound HTTPS access to `api.magichour.ai` and `videos.magichour.ai`. **Animate image** uploads the Dify image to a signed URL on `videos.magichour.ai`, and completed images and videos are served from there too. No proxy or other host is needed.
+
+On self-hosted Dify, **Animate image** reads the uploaded image through Dify's file URL, so set `FILES_URL` in Dify's `.env` to an address the plugin daemon can reach, such as `http://api:5001` in the Docker Compose setup. Without it the tool fails with "Invalid file URL".
 
 ## Develop and package
 
@@ -36,13 +38,9 @@ pip install -r requirements.txt
 python -m main
 ```
 
-From the repository's parent directory, package a reviewed build:
+## Release
 
-```sh
-dify-plugin plugin package ./magic-hour-dify
-```
-
-Marketplace publication is a separate reviewed submission to [`langgenius/dify-plugins`](https://github.com/langgenius/dify-plugins).
+Change `version` in `manifest.yaml` (and `pyproject.toml`) in a PR. When it merges, the Release workflow builds `magic_hour-<version>.difypkg` and attaches it to a GitHub release. To publish it on the Dify Marketplace, open a PR to [`langgenius/dify-plugins`](https://github.com/langgenius/dify-plugins) that adds the package as `magichourhq/magic_hour/magic_hour-<version>.difypkg`.
 
 ## Privacy
 

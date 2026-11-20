@@ -1,6 +1,6 @@
 [project]
 name = "magic-hour-dify"
-version = "0.0.1"
+version = "0.1.0"
 description = "Magic Hour image and video generation tools for Dify."
 readme = "README.md"
 requires-python = ">=3.12"

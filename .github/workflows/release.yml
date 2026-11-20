@@ -1,0 +1,64 @@
+# Builds the plugin package and attaches it to a GitHub release when the version in manifest.yaml
+# changes on main. Run it manually to build the current version again. Publishing to the Dify
+# Marketplace is a separate PR to langgenius/dify-plugins with this package.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths: [manifest.yaml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DIFY_CLI_VERSION: "0.6.15"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create the GitHub release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Check if the version changed
+        run: |
+          VERSION=$(yq '.version' manifest.yaml)
+          OLD_VERSION=$(git show HEAD~1:manifest.yaml | yq '.version')
+          CHANGED=false
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] || [ "$OLD_VERSION" != "$VERSION" ]; then
+            CHANGED=true
+          fi
+          echo "Version $OLD_VERSION -> $VERSION, release: $CHANGED"
+          {
+            echo "CHANGED=$CHANGED"
+            echo "VERSION=$VERSION"
+          } >> "$GITHUB_ENV"
+      - name: Package
+        if: env.CHANGED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$DIFY_CLI_VERSION" --repo langgenius/dify-plugin-daemon \
+            --pattern dify-plugin-linux-amd64 --dir "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/dify-plugin-linux-amd64"
+          "$RUNNER_TEMP/dify-plugin-linux-amd64" plugin package . -o "$RUNNER_TEMP/magic_hour-$VERSION.difypkg"
+      - name: Create GitHub release
+        if: env.CHANGED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v$VERSION"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            exit 0
+          fi
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$TAG" \
+            --generate-notes \
+            "$RUNNER_TEMP/magic_hour-$VERSION.difypkg"
