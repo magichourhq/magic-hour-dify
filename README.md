@@ -21,6 +21,10 @@ Generation is asynchronous. Keep the project ID returned by a create tool and pa
 
 Image and video generation consumes Magic Hour credits. The plugin validates credentials with `GET /v1/account`; it does not expose account details to workflows during setup.
 
+## Connection requirements
+
+The plugin needs outbound HTTPS access to `api.magichour.ai`. **Animate image** also uploads the Dify image to the signed upload URL that the Magic Hour API returns. No proxy or other host is needed.
+
 ## Develop and package
 
 Requires Python 3.12 and the [Dify plugin CLI](https://docs.dify.ai/plugins/quick-start/develop-plugins/initialize-development-tools).
