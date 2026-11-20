@@ -15,7 +15,7 @@ concurrency:
 env:
   # Pinned, so a toolkit or CLI update can't change this check without a PR here.
   TOOLKIT_REF: 83ee707c1dde758678f94a311f15b42d74f8c402
-  DIFY_CLI_VERSION: v0.6.15
+  DIFY_CLI_VERSION: "0.6.15"
 
 jobs:
   check:
