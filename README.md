@@ -36,13 +36,9 @@ pip install -r requirements.txt
 python -m main
 ```
 
-From the repository's parent directory, package a reviewed build:
+## Release
 
-```sh
-dify-plugin plugin package ./magic-hour-dify
-```
-
-Marketplace publication is a separate reviewed submission to [`langgenius/dify-plugins`](https://github.com/langgenius/dify-plugins).
+Change `version` in `manifest.yaml` (and `pyproject.toml`) in a PR. When it merges, the Release workflow builds `magic_hour-<version>.difypkg` and attaches it to a GitHub release. To publish it on the Dify Marketplace, open a PR to [`langgenius/dify-plugins`](https://github.com/langgenius/dify-plugins) that adds the package as `magichourhq/magic_hour/magic_hour-<version>.difypkg`.
 
 ## Privacy
 
