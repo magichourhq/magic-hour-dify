@@ -1,0 +1,59 @@
+# Runs the same package checks as the Dify Marketplace pre-check on langgenius/dify-plugins, so a
+# submission doesn't fail there first.
+name: Check
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned, so a toolkit or CLI update can't change this check without a PR here.
+  TOOLKIT_REF: 83ee707c1dde758678f94a311f15b42d74f8c402
+  DIFY_CLI_VERSION: v0.6.15
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: plugin
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: langgenius/dify-marketplace-toolkit
+          ref: ${{ env.TOOLKIT_REF }}
+          path: toolkit
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$DIFY_CLI_VERSION" --repo langgenius/dify-plugin-daemon \
+            --pattern dify-plugin-linux-amd64 --dir "$RUNNER_TEMP"
+          chmod +x "$RUNNER_TEMP/dify-plugin-linux-amd64"
+          "$RUNNER_TEMP/dify-plugin-linux-amd64" plugin package plugin -o magic_hour.difypkg
+          unzip -q magic_hour.difypkg -d unpacked
+      - name: Validate the package
+        run: python toolkit/validator/validate-difypkg.py magic_hour.difypkg --output-dir "$RUNNER_TEMP/validation"
+      - name: Install dependencies
+        run: pip install -r unpacked/requirements.txt requests
+      - name: Start the plugin
+        env:
+          INSTALL_METHOD: serverless
+          SERVERLESS_HOST: 127.0.0.1
+          SERVERLESS_PORT: "8080"
+        run: timeout 300 python toolkit/validator/test-plugin-install.py -d unpacked
+      - name: Package the way the Marketplace does
+        run: |
+          python toolkit/uploader -d unpacked -t unused -u https://marketplace.dify.ai -f --test \
+            --plugin-daemon-path "$RUNNER_TEMP/dify-plugin-linux-amd64"
