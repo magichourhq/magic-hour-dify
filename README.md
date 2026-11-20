@@ -23,7 +23,7 @@ Image and video generation consumes Magic Hour credits. The plugin validates cre
 
 ## Connection requirements
 
-The plugin needs outbound HTTPS access to `api.magichour.ai`. **Animate image** also uploads the Dify image to the signed upload URL that the Magic Hour API returns. No proxy or other host is needed.
+The plugin needs outbound HTTPS access to `api.magichour.ai` and `videos.magichour.ai`. **Animate image** uploads the Dify image to a signed URL on `videos.magichour.ai`, and completed images and videos are served from there too. No proxy or other host is needed.
 
 ## Develop and package
 

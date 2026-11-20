@@ -31,4 +31,5 @@ privacy: PRIVACY.md
 network:
   domains:
     - api.magichour.ai
+    - videos.magichour.ai
 verified: false
